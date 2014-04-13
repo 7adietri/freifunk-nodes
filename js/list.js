@@ -2,6 +2,37 @@ if (!ffnds) var ffnds = {};
 
 (function () {
   var tbody, routersum, clientsum, lastupdate;
+  var node_filter;
+
+  var apply_filter = function () {
+    var online = 0, total = 0, clients = 0;
+    var rows = tbody.selectAll('tr');
+    rows.classed('filtered', function (d) {
+      if (node_filter(d)) {
+        online += d.flags.online;
+        total += 1;
+        clients += d.clients;
+        return false;
+      } else {
+        return true;
+      }
+    })
+    routersum.text(online + ' / ' + total);
+    clientsum.text(clients);
+  };
+
+  var update_filter = function (fragment) {
+    var filter = ffnds.parse_filter(fragment);
+    node_filter = function(node) {
+      var value = node.name + ' ' + node.firmware + ' ' + node.model;
+      return filter(value);
+    }
+    window.location.hash = '#' + fragment;
+    if (!fragment && typeof window.history.replaceState === 'function') {
+      history.replaceState({}, '', window.location.href.slice(0, -1));
+    }
+    apply_filter();
+  };
 
   var name_sort = function (node_a, node_b) {
     var name_a = node_a.name.toLocaleLowerCase();
@@ -24,7 +55,9 @@ if (!ffnds) var ffnds = {};
     tr.append('td');
 
     data.select('td:nth-child(1)').text(function (d) { return d.name; });
-    data.select('td:nth-child(2)').text(function (d) { return d.flags.online ? 'Online' : 'Offline'; });
+    data.select('td:nth-child(2)')
+      .text(function (d) { return d.flags.online ? 'Online' : 'Offline'; })
+      .classed('offline', function (d) { return !d.flags.online; });
     data.select('td:nth-child(3)').text(function (d) { return d.clients; });
     data.select('td:nth-child(4)').text(function (d) { return d.wifi.length; });
     data.select('td:nth-child(5)').text(function (d) { return d.vpn.length; });
@@ -34,9 +67,8 @@ if (!ffnds) var ffnds = {};
 
     data.exit().remove();
 
-    routersum.text(nodes.reduce(function (s, d) { return s + d.flags.online; }, 0) + ' / ' + nodes.length);
-    clientsum.text(nodes.reduce(function (s, d) { return s + d.clients; }, 0));
     lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
+    apply_filter();
   };
 
   var init_list = function (table) {
@@ -63,6 +95,14 @@ if (!ffnds) var ffnds = {};
 
   ffnds.init = function () {
     init_list(d3.select('#list'));
+
+    var fragment = window.location.hash.substring(1);
+    update_filter(fragment);
+
+    var input = document.getElementById('filter');
+    input.placeholder = 'Filter';
+    input.value = fragment;
+    input.addEventListener('input', function () { update_filter(this.value); }, false);
 
     d3.json('nodes.json', function (error, json) {
       if (error) {

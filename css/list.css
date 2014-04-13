@@ -1,0 +1,37 @@
+body {
+	font-family: sans-serif;
+}
+
+#list {
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+
+#list th, #list td {
+	border-left: 1px solid black;
+	padding: 0.2em 0.4em;
+}
+
+#list thead th {
+	border-bottom: 2px solid black;
+	text-align: left;
+}
+
+#list tbody tr.filtered {
+	display: none;
+}
+
+#list tbody td:nth-child(2) {
+	color: white;
+	background-color: #449D44;
+}
+
+#list tbody td:nth-child(2).offline {
+	color: white;
+	background-color: #C21862;
+}
+
+#list tfoot td {
+	border-top: 2px solid black;
+	font-weight: bold;
+}

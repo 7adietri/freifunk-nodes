@@ -32,4 +32,26 @@ if (!ffnds) var ffnds = {};
       nodes: nodes.filter(function (d) { return !d.flags.client; })
     };
   };
+
+  ffnds.parse_filter = function (filter_string) {
+    var filter;
+    var regexes = [];
+    if (filter_string) {
+      filter_string.split(',').forEach(function (p) {
+        if (p) {
+          p = p.replace(/\./g, '\\.')
+          p = p.replace(/\+/g, '\\+')
+          regexes.push(new RegExp(p, 'i'));
+        }
+      });
+      filter = function (value) {
+        return regexes.some(function (r) { return r.test(value); });
+      }
+    } else {
+      filter = function () {
+        return true;
+      }
+    }
+    return filter;
+  };
 }());
