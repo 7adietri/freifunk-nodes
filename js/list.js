@@ -3,6 +3,7 @@ if (!ffnds) var ffnds = {};
 (function () {
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
+  var refresh = 5 * 60 * 1000;
 
   var apply_filter = function () {
     var online = 0, total = 0, clients = 0;
@@ -71,6 +72,21 @@ if (!ffnds) var ffnds = {};
     apply_filter();
   };
 
+  var load_nodes = function () {
+    d3.json('nodes.json', function (error, json) {
+      if (error) {
+        console.log('Error loading nodes: ' + error);
+      } else {
+        try {
+          update_list(ffnds.prepare_nodes(json));
+        } catch (error) {
+          console.log('Error updating list: ' + error);
+        }
+      }
+      window.setTimeout(load_nodes, refresh);
+    });
+  };
+
   var init_list = function (table) {
     var thead = table.append('thead');
     var hdr = thead.append('tr');
@@ -104,13 +120,7 @@ if (!ffnds) var ffnds = {};
     input.value = fragment;
     input.addEventListener('input', function () { update_filter(this.value); }, false);
 
-    d3.json('nodes.json', function (error, json) {
-      if (error) {
-        console.log('Error loading nodes: ' + error);
-      } else {
-        update_list(ffnds.prepare_nodes(json));
-      }
-    });
+    load_nodes();
   };
 }());
 
