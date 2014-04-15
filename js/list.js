@@ -42,8 +42,7 @@ if (!ffnds) var ffnds = {};
   };
 
   var update_list = function (json) {
-    var nodes = json.nodes.sort(name_sort);
-    var data = tbody.selectAll('tr').data(nodes, function (d) { return d.id; });
+    var data = tbody.selectAll('tr').data(json.nodes, function (d) { return d.id; });
 
     var tr = data.enter().append('tr');
     tr.append('td');
@@ -67,9 +66,10 @@ if (!ffnds) var ffnds = {};
     data.select('td:nth-child(8)').text(function (d) { return d.model; });
 
     data.exit().remove();
+    data.sort(name_sort);
+    apply_filter();
 
     lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
-    apply_filter();
   };
 
   var load_nodes = function () {
