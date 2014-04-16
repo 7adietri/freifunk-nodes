@@ -28,10 +28,7 @@ if (!ffnds) var ffnds = {};
       var value = node.name + ' ' + node.firmware + ' ' + node.model;
       return filter(value);
     }
-    window.location.hash = '#' + fragment;
-    if (!fragment && typeof window.history.replaceState === 'function') {
-      history.replaceState({}, '', window.location.href.slice(0, -1));
-    }
+    ffnds.set_fragment(fragment);
     apply_filter();
   };
 

@@ -1,6 +1,8 @@
 if (!ffnds) var ffnds = {};
 
 (function () {
+  var hasReplaceState = (typeof window.history.replaceState === 'function');
+
   // Ensure name property, resolve links, remove clients.
   ffnds.prepare_nodes = function (json) {
     var nodes = json.nodes;
@@ -33,6 +35,8 @@ if (!ffnds) var ffnds = {};
     };
   };
 
+  // Parse a comma-separated, case-insensitive regex filter.
+  // Escaped characters: '.' and '+'
   ffnds.parse_filter = function (filter_string) {
     var filter;
     var regexes = [];
@@ -53,5 +57,14 @@ if (!ffnds) var ffnds = {};
       }
     }
     return filter;
+  };
+
+  // Set the URI fragment.
+  ffnds.set_fragment = function (fragment) {
+    window.location.hash = '#' + fragment;
+    var href = window.location.href;
+    if (!fragment && href.slice(-1) === '#' && hasReplaceState) {
+      history.replaceState({}, '', href.slice(0, -1));
+    }
   };
 }());
