@@ -3,6 +3,17 @@ if (!ffnds) var ffnds = {};
 (function () {
   var hasReplaceState = (typeof window.history.replaceState === 'function');
 
+  // Update homepage link according to config.js
+  ffnds.init_homepage = function () {
+    var homepage = document.getElementById('homepage');
+    if (ffnds.config.homepage_url) {
+      homepage.href = ffnds.config.homepage_url;
+    }
+    if (ffnds.config.homepage_text) {
+      homepage.text = ffnds.config.homepage_text;
+    }
+  };
+
   // Ensure name property, resolve links, remove clients.
   ffnds.prepare_nodes = function (json) {
     var nodes = json.nodes;

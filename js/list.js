@@ -1,6 +1,7 @@
 if (!ffnds) var ffnds = {};
 
 (function () {
+  var cfg;
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
   var refresh = 5 * 60 * 1000;
@@ -70,7 +71,7 @@ if (!ffnds) var ffnds = {};
   };
 
   var load_nodes = function () {
-    d3.json('nodes.json', function (error, json) {
+    d3.json(cfg.nodes_url, function (error, json) {
       if (error) {
         console.log('Error loading nodes: ' + error);
       } else {
@@ -107,6 +108,8 @@ if (!ffnds) var ffnds = {};
   };
 
   ffnds.init = function () {
+    cfg = ffnds.config;
+    ffnds.init_homepage();
     init_list(d3.select('#list'));
 
     var fragment = window.location.hash.substring(1);
