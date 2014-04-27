@@ -35,6 +35,11 @@ header a {
 	display: none;
 }
 
+#list tbody td:nth-child(1) a {
+	color: black;
+	text-decoration: none;
+}
+
 #list tbody td:nth-child(2) {
 	color: white;
 	background-color: #449D44;

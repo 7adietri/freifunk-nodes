@@ -9,5 +9,8 @@ if (!ffnds) var ffnds = {};
     homepage_url: 'http://freifunk.net/',
     // Text for homepage link
     homepage_text: 'freifunk.net',
+
+    // Function to turn node object into URL, or undefined
+    node_linker: undefined
   };
 }());

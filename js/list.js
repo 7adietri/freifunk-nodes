@@ -52,7 +52,14 @@ if (!ffnds) var ffnds = {};
     tr.append('td');
     tr.append('td');
 
-    data.select('td:nth-child(1)').text(function (d) { return d.name; });
+    if (cfg.node_linker) {
+      data.select('td:nth-child(1)').append('a')
+        .attr('href', cfg.node_linker)
+        .attr('target', '_blank')
+        .text(function (d) { return d.name; });
+    } else {
+      data.select('td:nth-child(1)').text(function (d) { return d.name; });
+    }
     data.select('td:nth-child(2)')
       .text(function (d) { return d.flags.online ? 'Online' : 'Offline'; })
       .classed('offline', function (d) { return !d.flags.online; });
