@@ -1,19 +1,33 @@
 body {
+	margin: 0;
 	font-family: sans-serif;
 }
 
+header {
+	width: 100%;
+	background: #333;
+}
+
+header a {
+	margin: 0.2em 0.4em;
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+}
+
 #list {
-	border: 2px solid black;
+	margin: 0.2em 0.4em;
+	border: 2px solid #333;
 	border-collapse: collapse;
 }
 
 #list th, #list td {
-	border-left: 1px solid black;
+	border-left: 1px solid #333;
 	padding: 0.2em 0.4em;
 }
 
 #list thead th {
-	border-bottom: 2px solid black;
+	border-bottom: 2px solid #333;
 	text-align: left;
 }
 
@@ -32,6 +46,6 @@ body {
 }
 
 #list tfoot td {
-	border-top: 2px solid black;
+	border-top: 2px solid #333;
 	font-weight: bold;
 }
