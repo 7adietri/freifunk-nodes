@@ -3,7 +3,7 @@ if (!ffnds) var ffnds = {};
 (function () {
   var hasReplaceState = (typeof window.history.replaceState === 'function');
 
-  // Update homepage link according to config.js
+  // Update homepage link according to config.js.
   ffnds.init_homepage = function () {
     var homepage = document.getElementById('homepage');
     if (ffnds.config.homepage_url) {

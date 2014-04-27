@@ -6,6 +6,7 @@ if (!ffnds) var ffnds = {};
   var node_filter;
   var refresh = 5 * 60 * 1000;
 
+  // Apply filter function to nodes, update node/client counts.
   var apply_filter = function () {
     var online = 0, total = 0, clients = 0;
     var rows = tbody.selectAll('tr');
@@ -23,6 +24,7 @@ if (!ffnds) var ffnds = {};
     clientsum.text(clients);
   };
 
+  // Update filter function and URL fragment, apply new filter.
   var update_filter = function (fragment) {
     var filter = ffnds.parse_filter(fragment);
     node_filter = function(node) {
@@ -39,6 +41,7 @@ if (!ffnds) var ffnds = {};
     return name_a.localeCompare(name_b);
   };
 
+  // Update table with node data, sort and filter.
   var update_list = function (json) {
     var data = tbody.selectAll('tr').data(json.nodes, function (d) { return d.id; });
 
@@ -77,6 +80,7 @@ if (!ffnds) var ffnds = {};
     lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
   };
 
+  // Periodically load node data.
   var load_nodes = function () {
     d3.json(cfg.nodes_url, function (error, json) {
       if (error) {
