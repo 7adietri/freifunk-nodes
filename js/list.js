@@ -53,7 +53,7 @@ if (!ffnds) var ffnds = {};
     tr.append('td');
 
     if (cfg.node_linker) {
-      data.select('td:nth-child(1)').append('a')
+      data.select('td:nth-child(1)').html(null).append('a')
         .attr('href', cfg.node_linker)
         .attr('target', '_blank')
         .text(function (d) { return d.name; });
