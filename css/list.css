@@ -1,60 +1,64 @@
 body {
-	margin: 0;
-	font-family: sans-serif;
+  margin: 0;
+  font-family: sans-serif;
 }
 
 header {
-	width: 100%;
-	background: #333;
+  width: 100%;
+  background: #333;
 }
 
 header a {
-	margin: 0.2em 0.4em;
-	color: white;
-	font-weight: bold;
-	text-decoration: none;
+  margin: 0.2em 0.4em;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 header input {
-	margin: 2px 0px;
+  margin: 2px 0px;
 }
 
 #list {
-	margin: 0.2em 0.4em;
-	border: 2px solid #333;
-	border-collapse: collapse;
+  margin: 0.2em 0.4em;
+  border: 2px solid #333;
+  border-collapse: collapse;
 }
 
 #list th, #list td {
-	border-left: 1px solid #333;
-	padding: 0.2em 0.4em;
+  border-left: 1px solid #333;
+  padding: 0.2em 0.4em;
 }
 
 #list thead th {
-	border-bottom: 2px solid #333;
-	text-align: left;
+  border-bottom: 2px solid #333;
+  text-align: left;
 }
 
 #list tbody tr.filtered {
-	display: none;
+  display: none;
 }
 
 #list tbody td:nth-child(1) a {
-	color: black;
-	text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 
 #list tbody td:nth-child(2) {
-	color: white;
-	background-color: #449D44;
+  color: white;
+  background-color: #449D44;
 }
 
 #list tbody td:nth-child(2).offline {
-	color: white;
-	background-color: #C21862;
+  color: white;
+  background-color: #C21862;
+}
+
+#list tbody td:nth-child(3) {
+  text-align: right;
 }
 
 #list tfoot td {
-	border-top: 2px solid #333;
-	font-weight: bold;
+  border-top: 2px solid #333;
+  font-weight: bold;
 }

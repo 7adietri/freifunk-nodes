@@ -54,6 +54,7 @@ if (!ffnds) var ffnds = {};
     tr.append('td');
     tr.append('td');
     tr.append('td');
+    tr.append('td');
 
     if (cfg.node_linker) {
       data.select('td:nth-child(1)').html(null).append('a')
@@ -66,18 +67,27 @@ if (!ffnds) var ffnds = {};
     data.select('td:nth-child(2)')
       .text(function (d) { return d.flags.online ? 'Online' : 'Offline'; })
       .classed('offline', function (d) { return !d.flags.online; });
-    data.select('td:nth-child(3)').text(function (d) { return d.clients; });
-    data.select('td:nth-child(4)').text(function (d) { return d.wifi.length; });
-    data.select('td:nth-child(5)').text(function (d) { return d.vpn.length; });
-    data.select('td:nth-child(6)').text(function (d) { return d.geo ? 'Ja' : 'Nein'; });
-    data.select('td:nth-child(7)').text(function (d) { return d.firmware; });
-    data.select('td:nth-child(8)').text(function (d) { return d.model; });
+    data.select('td:nth-child(3)').text(render_uptime);
+    data.select('td:nth-child(4)').text(function (d) { return d.clients; });
+    data.select('td:nth-child(5)').text(function (d) { return d.wifi.length; });
+    data.select('td:nth-child(6)').text(function (d) { return d.vpn.length; });
+    data.select('td:nth-child(7)').text(function (d) { return d.geo ? 'Ja' : 'Nein'; });
+    data.select('td:nth-child(8)').text(function (d) { return d.firmware; });
+    data.select('td:nth-child(9)').text(function (d) { return d.model; });
 
     data.exit().remove();
     data.sort(name_sort);
     apply_filter();
 
     lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
+  };
+
+  var render_uptime = function (d) {
+    if (d.hasOwnProperty('uptime') && d.uptime > 0) {
+      return (d.uptime / 3600).toFixed(1) + 'h';
+    } else {
+      return '';
+    }
   };
 
   // Periodically load node data.
@@ -101,6 +111,7 @@ if (!ffnds) var ffnds = {};
     var hdr = thead.append('tr');
     hdr.append('th').text('Name');
     hdr.append('th').text('Status');
+    hdr.append('th').text('Uptime');
     hdr.append('th').text('Clients');
     hdr.append('th').text('WLAN');
     hdr.append('th').text('VPN');
@@ -112,8 +123,9 @@ if (!ffnds) var ffnds = {};
 
     var tfoot = table.append('tfoot');
     var ftr = tfoot.append('tr');
-    ftr.append('td').text('Summe');
+    ftr.append('td');
     routersum = ftr.append('td').append('span');
+    ftr.append('td');
     clientsum = ftr.append('td').append('span');
     lastupdate = ftr.append('td').attr('colspan', '5').style('text-align', 'right').text('Stand: ').append('span');
   };
