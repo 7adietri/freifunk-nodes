@@ -44,6 +44,10 @@ header input {
   text-decoration: none;
 }
 
+#list tbody td:nth-child(1) a[href] {
+  border-bottom: 0.5px dotted #333;
+}
+
 #list tbody td:nth-child(2) {
   color: white;
   background-color: #449D44;
