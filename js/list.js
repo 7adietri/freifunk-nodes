@@ -4,7 +4,7 @@ if (!ffnds) var ffnds = {};
   var cfg;
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
-  var refresh = 5 * 60 * 1000;
+  var updater_id;
 
   // Apply filter function to nodes, update node/client counts.
   var apply_filter = function () {
@@ -102,7 +102,6 @@ if (!ffnds) var ffnds = {};
           console.log('Error updating list: ' + error);
         }
       }
-      window.setTimeout(load_nodes, refresh);
     });
   };
 
@@ -143,6 +142,7 @@ if (!ffnds) var ffnds = {};
     input.value = fragment;
     input.addEventListener('input', function () { update_filter(this.value); }, false);
 
+    updater_id = window.setInterval(load_nodes, cfg.update_period * 60 * 1000);
     load_nodes();
   };
 }());

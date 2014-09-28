@@ -10,6 +10,9 @@ if (!ffnds) var ffnds = {};
     // Text for homepage link
     homepage_text: 'freifunk.net',
 
+    // Update period for node data, in minutes
+    update_period: 1,
+
     // Function to turn node object into URL, or undefined
     node_linker: undefined
   };
