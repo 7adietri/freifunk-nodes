@@ -83,8 +83,15 @@ if (!ffnds) var ffnds = {};
   };
 
   var render_uptime = function (d) {
+    var days = 0, hours = 0;
     if (d.hasOwnProperty('uptime') && d.uptime > 0) {
-      return (d.uptime / 3600).toFixed(1) + 'h';
+      if (d.uptime > 86400) {
+        days = Math.floor(d.uptime / 86400);
+        hours = Math.floor(d.uptime % 86400 / 3600);
+        return days + 'd ' + hours + 'h';
+      } else {
+        return (d.uptime / 3600).toFixed(1) + 'h';
+      }
     } else {
       return '';
     }
