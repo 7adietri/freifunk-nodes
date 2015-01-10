@@ -22,7 +22,6 @@ if (!ffnds) var ffnds = {};
         if (!d.name) {
           d.name = d.id;
         }
-        d.clients = 0;
         d.wifi = [];
         d.vpn = [];
       }
@@ -30,12 +29,10 @@ if (!ffnds) var ffnds = {};
     json.links.forEach(function (d) {
       var src = nodes[d.source];
       var dst = nodes[d.target];
-      if (d.type === 'client') {
-        src.clients++;
-      } else if (d.type === 'vpn') {
+      if (d.type === 'vpn') {
         src.vpn.push(dst);
         dst.vpn.push(src);
-      } else {
+      } else if (d.type === null) {
         src.wifi.push(dst);
         dst.wifi.push(src);
       }

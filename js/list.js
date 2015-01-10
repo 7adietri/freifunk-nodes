@@ -14,7 +14,7 @@ if (!ffnds) var ffnds = {};
       if (node_filter(d)) {
         online += d.flags.online;
         total += 1;
-        clients += d.clients;
+        clients += d.clientcount;
         return false;
       } else {
         return true;
@@ -68,7 +68,7 @@ if (!ffnds) var ffnds = {};
       .text(function (d) { return d.flags.online ? 'Online' : 'Offline'; })
       .classed('offline', function (d) { return !d.flags.online; });
     data.select('td:nth-child(3)').text(render_uptime);
-    data.select('td:nth-child(4)').text(function (d) { return d.clients; });
+    data.select('td:nth-child(4)').text(function (d) { return d.clientcount; });
     data.select('td:nth-child(5)').text(function (d) { return d.wifi.length; });
     data.select('td:nth-child(6)').text(function (d) { return d.vpn.length; });
     data.select('td:nth-child(7)').text(function (d) { return d.geo ? 'Ja' : 'Nein'; });
