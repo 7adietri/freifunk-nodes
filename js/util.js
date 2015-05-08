@@ -22,7 +22,7 @@ if (!ffnds) var ffnds = {};
         if (!d.name) {
           d.name = d.id;
         }
-        d.wifi = [];
+        d.mesh = [];
         d.vpn = [];
       }
     });
@@ -33,8 +33,8 @@ if (!ffnds) var ffnds = {};
         src.vpn.push(dst);
         dst.vpn.push(src);
       } else if (d.type === null) {
-        src.wifi.push(dst);
-        dst.wifi.push(src);
+        src.mesh.push(dst);
+        dst.mesh.push(src);
       }
     });
     return {
