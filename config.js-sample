@@ -6,7 +6,7 @@ if (!ffnds) var ffnds = {};
     nodes_url: 'nodes.json',
 
     // URL for homepage link
-    homepage_url: 'http://freifunk.net/',
+    homepage_url: 'https://freifunk.net/',
     // Text for homepage link
     homepage_text: 'freifunk.net',
 
