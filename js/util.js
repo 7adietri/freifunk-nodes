@@ -29,10 +29,10 @@ if (!ffnds) var ffnds = {};
     json.links.forEach(function (d) {
       var src = nodes[d.source];
       var dst = nodes[d.target];
-      if (d.type === 'vpn') {
+      if (src.flags.gateway || dst.flags.gateway) {
         src.vpn.push(dst);
         dst.vpn.push(src);
-      } else if (d.type === null) {
+      } else {
         src.mesh.push(dst);
         dst.mesh.push(src);
       }
