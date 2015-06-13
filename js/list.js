@@ -1,7 +1,7 @@
 if (!ffnds) var ffnds = {};
 
 (function () {
-  var cfg;
+  var cfg, loc;
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
   var updater_id;
@@ -21,7 +21,7 @@ if (!ffnds) var ffnds = {};
         return true;
       }
     })
-    routersum.text(online + ' / ' + total);
+    routersum.text(loc('Sum_Online_Total', online, total));
     clientsum.text(clients);
   };
 
@@ -66,13 +66,13 @@ if (!ffnds) var ffnds = {};
       data.select('td:nth-child(1)').text(function (d) { return d.name; });
     }
     data.select('td:nth-child(2)')
-      .text(function (d) { return d.flags.online ? 'Online' : 'Offline'; })
+      .text(function (d) { return d.flags.online ? loc('Online') : loc('Offline'); })
       .classed('offline', function (d) { return !d.flags.online; });
     data.select('td:nth-child(3)').text(render_uptime);
     data.select('td:nth-child(4)').text(function (d) { return d.clientcount; });
     data.select('td:nth-child(5)').text(function (d) { return d.mesh.length; });
     data.select('td:nth-child(6)').text(function (d) { return d.vpn.length; });
-    data.select('td:nth-child(7)').text(function (d) { return d.geo ? 'Ja' : 'Nein'; });
+    data.select('td:nth-child(7)').text(function (d) { return d.geo ? loc('Yes') : loc('No') });
     data.select('td:nth-child(8)').text(function (d) { return d.firmware; });
     data.select('td:nth-child(9)').text(function (d) { return d.model; });
 
@@ -80,7 +80,8 @@ if (!ffnds) var ffnds = {};
     data.sort(name_sort);
     apply_filter();
 
-    lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
+    var timestamp = new Date(json.meta.timestamp + 'Z').toLocaleString();
+    lastupdate.text(loc('Updated_Timestamp', timestamp));
 
     if (first_load) {
       d3.select('#loading').style('display', 'none');
@@ -95,9 +96,10 @@ if (!ffnds) var ffnds = {};
       if (d.uptime > 86400) {
         days = Math.floor(d.uptime / 86400);
         hours = Math.floor(d.uptime % 86400 / 3600);
-        return days + 'd ' + hours + 'h';
+        return loc('Uptime_Days_Hours', days, hours);
       } else {
-        return (d.uptime / 3600).toFixed(1) + 'h';
+        hours = (d.uptime / 3600).toFixed(1);
+        return loc('Uptime_Hours', hours);
       }
     } else {
       return '';
@@ -124,15 +126,15 @@ if (!ffnds) var ffnds = {};
 
     var thead = table.append('thead');
     var hdr = thead.append('tr');
-    hdr.append('th').text('Name');
-    hdr.append('th').text('Status');
-    hdr.append('th').text('Uptime');
-    hdr.append('th').text('Clients');
-    hdr.append('th').text('Mesh');
-    hdr.append('th').text('VPN');
-    hdr.append('th').text('Geo');
-    hdr.append('th').text('Firmware');
-    hdr.append('th').text('Modell');
+    hdr.append('th').text(loc('Name'));
+    hdr.append('th').text(loc('Status'));
+    hdr.append('th').text(loc('Uptime'));
+    hdr.append('th').text(loc('Clients'));
+    hdr.append('th').text(loc('Mesh'));
+    hdr.append('th').text(loc('VPN'));
+    hdr.append('th').text(loc('Geo'));
+    hdr.append('th').text(loc('Firmware'));
+    hdr.append('th').text(loc('Model'));
 
     tbody = table.append('tbody');
 
@@ -142,11 +144,12 @@ if (!ffnds) var ffnds = {};
     routersum = ftr.append('td').append('span');
     ftr.append('td');
     clientsum = ftr.append('td').append('span');
-    lastupdate = ftr.append('td').attr('colspan', '5').style('text-align', 'right').text('Stand: ').append('span');
+    lastupdate = ftr.append('td').attr('colspan', '5').style('text-align', 'right').append('span');
   };
 
   ffnds.init = function () {
     cfg = ffnds.config;
+    loc = ffnds.loc;
     ffnds.init_homepage();
     init_list(d3.select('#list'));
 
@@ -154,7 +157,6 @@ if (!ffnds) var ffnds = {};
     update_filter(fragment);
 
     var input = document.getElementById('filter');
-    input.placeholder = 'Filter';
     input.value = fragment;
     input.addEventListener('input', function () { update_filter(this.value); }, false);
 

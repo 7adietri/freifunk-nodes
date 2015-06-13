@@ -11,7 +11,7 @@ Installation
 
 1. Clone the repository to a webserver that also provides a `nodes.json` file.
 2. Copy `config.js-sample` to `config.js` and edit to your liking.
-3. Load `list.html`.
+3. Load one of the HTML files.
 
 Filtering
 ---------
