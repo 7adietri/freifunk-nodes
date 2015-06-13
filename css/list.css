@@ -19,6 +19,10 @@ header input {
   margin: 2px 0px;
 }
 
+#loading {
+  margin: 0.2em 0.4em;
+}
+
 #list {
   margin: 0.2em 0.4em;
   border: 2px solid #333;

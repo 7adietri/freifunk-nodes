@@ -5,6 +5,7 @@ if (!ffnds) var ffnds = {};
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
   var updater_id;
+  var first_load = true;
 
   // Apply filter function to nodes, update node/client counts.
   var apply_filter = function () {
@@ -80,6 +81,12 @@ if (!ffnds) var ffnds = {};
     apply_filter();
 
     lastupdate.text(new Date(json.meta.timestamp + 'Z').toLocaleString());
+
+    if (first_load) {
+      d3.select('#loading').style('display', 'none');
+      d3.select('#list').style('display', null);
+      first_load = false;
+    }
   };
 
   var render_uptime = function (d) {
@@ -113,6 +120,8 @@ if (!ffnds) var ffnds = {};
   };
 
   var init_list = function (table) {
+    table.style('display', 'none');
+
     var thead = table.append('thead');
     var hdr = thead.append('tr');
     hdr.append('th').text('Name');
