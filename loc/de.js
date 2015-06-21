@@ -3,6 +3,8 @@ if (!ffnds) var ffnds = {};
 (function () {
   var dict = {
     Uptime: 'Laufzeit',
+    Yes: 'Ja',
+    No: 'Nein',
     Model: 'Modell',
     Uptime_Days_Hours: '{}d {}h',
     Uptime_Hours: '{}h',
