@@ -1,10 +1,11 @@
 if (!ffnds) var ffnds = {};
 
 (function () {
-  var cfg, loc;
+  var cfg, loc, node, util;
   var tbody, routersum, clientsum, lastupdate;
   var node_filter;
   var updater_id;
+  var nodes, links;
   var first_load = true;
 
   // Apply filter function to nodes, update node/client counts.
@@ -13,9 +14,9 @@ if (!ffnds) var ffnds = {};
     var rows = tbody.selectAll('tr');
     rows.classed('filtered', function (d) {
       if (node_filter(d)) {
-        online += d.flags.online;
+        online += node.online(d);
         total += 1;
-        clients += d.clientcount;
+        clients += node.clients(d);
         return false;
       } else {
         return true;
@@ -27,24 +28,26 @@ if (!ffnds) var ffnds = {};
 
   // Update filter function and URL fragment, apply new filter.
   var update_filter = function (fragment) {
-    var filter = ffnds.parse_filter(fragment);
-    node_filter = function(node) {
-      var value = node.name + ' ' + node.firmware + ' ' + node.model;
-      return filter(value);
+    var filter = util.parse_filter(fragment);
+    node_filter = function(d) {
+      var name = node.name(d);
+      var firmware = node.firmware(d);
+      var model = node.model(d);
+      return filter(name + ' ' + firmware + ' ' + model);
     }
-    ffnds.set_fragment(fragment);
+    util.set_fragment(fragment);
     apply_filter();
   };
 
   var name_sort = function (node_a, node_b) {
-    var name_a = node_a.name.toLocaleLowerCase();
-    var name_b = node_b.name.toLocaleLowerCase();
+    var name_a = node.name(node_a).toLocaleLowerCase();
+    var name_b = node.name(node_b).toLocaleLowerCase();
     return name_a.localeCompare(name_b);
   };
 
   // Update table with node data, sort and filter.
-  var update_list = function (json) {
-    var data = tbody.selectAll('tr').data(json.nodes, function (d) { return d.id; });
+  var update_list = function () {
+    var data = tbody.selectAll('tr').data(d3.values(nodes.nodes), node.id);
 
     var tr = data.enter().append('tr');
     tr.append('td');
@@ -58,29 +61,32 @@ if (!ffnds) var ffnds = {};
     tr.append('td');
 
     if (cfg.node_linker) {
-      data.select('td:nth-child(1)').html(null).append('a')
+      data.select('td:nth-child(1)')
+        .html(null)
+        .append('a')
         .attr('href', cfg.node_linker)
         .attr('target', '_blank')
-        .text(function (d) { return d.name; });
+        .text(node.name);
     } else {
-      data.select('td:nth-child(1)').text(function (d) { return d.name; });
+      data.select('td:nth-child(1)')
+        .text(node.name);
     }
     data.select('td:nth-child(2)')
-      .text(function (d) { return d.flags.online ? loc('Online') : loc('Offline'); })
-      .classed('offline', function (d) { return !d.flags.online; });
+      .text(function (d) { return node.online(d) ? loc('Online') : loc('Offline'); })
+      .classed('online', node.online);
     data.select('td:nth-child(3)').text(render_uptime);
-    data.select('td:nth-child(4)').text(function (d) { return d.clientcount; });
-    data.select('td:nth-child(5)').text(function (d) { return d.mesh.length; });
-    data.select('td:nth-child(6)').text(function (d) { return d.vpn.length; });
-    data.select('td:nth-child(7)').text(function (d) { return d.geo ? loc('Yes') : loc('No') });
-    data.select('td:nth-child(8)').text(function (d) { return d.firmware; });
-    data.select('td:nth-child(9)').text(function (d) { return d.model; });
+    data.select('td:nth-child(4)').text(node.clients);
+    data.select('td:nth-child(5)').text(count_mesh_links);
+    data.select('td:nth-child(6)').text(count_vpn_links);
+    data.select('td:nth-child(7)').text(function (d) { return node.location(d) ? loc('Yes') : loc('No') });
+    data.select('td:nth-child(8)').text(node.firmware);
+    data.select('td:nth-child(9)').text(node.model);
 
     data.exit().remove();
     data.sort(name_sort);
     apply_filter();
 
-    var timestamp = new Date(json.meta.timestamp + 'Z').toLocaleString();
+    var timestamp = new Date(nodes.timestamp + 'Z').toLocaleString();
     lastupdate.text(loc('Updated_Timestamp', timestamp));
 
     if (first_load) {
@@ -91,14 +97,15 @@ if (!ffnds) var ffnds = {};
   };
 
   var render_uptime = function (d) {
+    var uptime = node.uptime(d);
     var days = 0, hours = 0;
-    if (d.hasOwnProperty('uptime') && d.uptime > 0) {
-      if (d.uptime > 86400) {
-        days = Math.floor(d.uptime / 86400);
-        hours = Math.floor(d.uptime % 86400 / 3600);
+    if (uptime > 0) {
+      if (uptime > 86400) {
+        days = Math.floor(uptime / 86400);
+        hours = Math.floor(uptime % 86400 / 3600);
         return loc('Uptime_Days_Hours', days, hours);
       } else {
-        hours = (d.uptime / 3600).toFixed(1);
+        hours = (uptime / 3600).toFixed(1);
         return loc('Uptime_Hours', hours);
       }
     } else {
@@ -106,17 +113,59 @@ if (!ffnds) var ffnds = {};
     }
   };
 
-  // Periodically load node data.
-  var load_nodes = function () {
+  var count_mesh_links = function (d) {
+    var list = links[node.id(d)] || [];
+    return list.filter(function (l) { return l.vpn === false; }).length;
+  };
+
+  var count_vpn_links = function (d) {
+    var list = links[node.id(d)] || [];
+    return list.filter(function (l) { return l.vpn === true; }).length;
+  };
+
+  var parse_links = function (json) {
+    var links = {};
+    var add_link = function (source_id, target_id, json) {
+      if (links[source_id] === undefined) {
+        links[source_id] = [];
+      }
+      links[source_id].push({
+        target: target_id,
+        vpn: json.vpn,
+        tq: json.tq
+      });
+    };
+    try {
+      var nodes = json.batadv.nodes;
+      json.batadv.links.forEach(function (l) {
+        var s = nodes[l.source];
+        var t = nodes[l.target];
+        add_link(s.node_id, t.node_id, l);
+        if (l.bidirect) {
+          add_link(t.node_id, s.node_id, l);
+        }
+      });
+    }
+    catch (e) {
+      console.log('Error parsing links: ' + e);
+    }
+    return links;
+  };
+
+  var load_data = function () {
     d3.json(cfg.nodes_url, function (error, json) {
       if (error) {
-        console.log('Error loading nodes: ' + error);
+        console.log('Error loading nodes.json: ' + error);
       } else {
-        try {
-          update_list(ffnds.prepare_nodes(json));
-        } catch (error) {
-          console.log('Error updating list: ' + error);
-        }
+        nodes = json;
+        d3.json(cfg.graph_url, function (error, json) {
+          if (error) {
+            console.log('Error loading graph.json: ' + error);
+          } else {
+            links = parse_links(json);
+          }
+          update_list();
+        });
       }
     });
   };
@@ -150,7 +199,9 @@ if (!ffnds) var ffnds = {};
   ffnds.init = function () {
     cfg = ffnds.config;
     loc = ffnds.loc;
-    ffnds.init_homepage();
+    node = ffnds.node;
+    util = ffnds.util;
+    util.init_homepage();
     init_list(d3.select('#list'));
 
     var fragment = window.location.hash.substring(1);
@@ -160,8 +211,9 @@ if (!ffnds) var ffnds = {};
     input.value = fragment;
     input.addEventListener('input', function () { update_filter(this.value); }, false);
 
-    updater_id = window.setInterval(load_nodes, cfg.update_period * 60 * 1000);
-    load_nodes();
+    links = {};
+    updater_id = window.setInterval(load_data, cfg.update_period * 60 * 1000);
+    load_data();
   };
 }());
 

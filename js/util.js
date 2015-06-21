@@ -4,7 +4,7 @@ if (!ffnds) var ffnds = {};
   var hasReplaceState = (typeof window.history.replaceState === 'function');
 
   // Update homepage link according to config.js.
-  ffnds.init_homepage = function () {
+  var init_homepage = function () {
     var homepage = document.getElementById('homepage');
     if (ffnds.config.homepage_url) {
       homepage.href = ffnds.config.homepage_url;
@@ -14,38 +14,9 @@ if (!ffnds) var ffnds = {};
     }
   };
 
-  // Ensure name property, resolve links, remove clients.
-  ffnds.prepare_nodes = function (json) {
-    var nodes = json.nodes;
-    nodes.forEach(function (d) {
-      if (!d.flags.client) {
-        if (!d.name) {
-          d.name = d.id;
-        }
-        d.mesh = [];
-        d.vpn = [];
-      }
-    });
-    json.links.forEach(function (d) {
-      var src = nodes[d.source];
-      var dst = nodes[d.target];
-      if (src.flags.gateway || dst.flags.gateway) {
-        src.vpn.push(dst);
-        dst.vpn.push(src);
-      } else {
-        src.mesh.push(dst);
-        dst.mesh.push(src);
-      }
-    });
-    return {
-      meta: json.meta,
-      nodes: nodes.filter(function (d) { return !d.flags.client; })
-    };
-  };
-
   // Parse a comma-separated, case-insensitive regex filter.
   // Escaped characters: '.' and '+'
-  ffnds.parse_filter = function (filter_string) {
+  var parse_filter = function (filter_string) {
     var filter;
     var regexes = [];
     if (filter_string) {
@@ -68,11 +39,17 @@ if (!ffnds) var ffnds = {};
   };
 
   // Set the URI fragment.
-  ffnds.set_fragment = function (fragment) {
+  var set_fragment = function (fragment) {
     window.location.hash = '#' + fragment;
     var href = window.location.href;
     if (!fragment && href.slice(-1) === '#' && hasReplaceState) {
       history.replaceState({}, '', href.slice(0, -1));
     }
+  };
+
+  ffnds.util = {
+    init_homepage: init_homepage,
+    parse_filter: parse_filter,
+    set_fragment: set_fragment,
   };
 }());

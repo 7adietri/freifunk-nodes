@@ -4,13 +4,15 @@ if (!ffnds) var ffnds = {};
   ffnds.config = {
     // URL for nodes.json file
     nodes_url: 'nodes.json',
+    // URL for graph.json file
+    graph_url: 'graph.json',
 
     // URL for homepage link
     homepage_url: 'https://freifunk.net/',
     // Text for homepage link
     homepage_text: 'freifunk.net',
 
-    // Update period for node data, in minutes
+    // Update period, in minutes
     update_period: 1,
 
     // Function to turn node object into URL, or undefined

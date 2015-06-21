@@ -52,12 +52,12 @@ header input {
   border-bottom: 0.5px dotted #333;
 }
 
-#list tbody td:nth-child(2) {
+#list tbody td:nth-child(2).online {
   color: white;
   background-color: #449D44;
 }
 
-#list tbody td:nth-child(2).offline {
+#list tbody td:nth-child(2) {
   color: white;
   background-color: #C21862;
 }

@@ -1,3 +1,2 @@
+*.json
 config.js
-graph*.json
-nodes*.json
