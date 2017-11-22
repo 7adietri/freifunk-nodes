@@ -9,14 +9,18 @@ if (!ffnds) var ffnds = {};
   };
 
   ffnds.loc = function (key) {
-    var value = key;
-    if (dict.hasOwnProperty(key)) {
-      value = dict[key];
+    if (key !== undefined) {
+      var value = key;
+      if (dict.hasOwnProperty(key)) {
+        value = dict[key];
+      }
+      var i = 1;
+      while (i < arguments.length) {
+        value = value.replace('{}', arguments[i++]);
+      }
+      return value;
+    } else {
+      return 'en';
     }
-    var i = 1;
-    while (i < arguments.length) {
-      value = value.replace('{}', arguments[i++]);
-    }
-    return value;
   };
 }());

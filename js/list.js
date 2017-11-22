@@ -86,8 +86,10 @@ if (!ffnds) var ffnds = {};
     data.sort(name_sort);
     apply_filter();
 
-    var timestamp = new Date(nodes.timestamp + 'Z').toLocaleString();
-    lastupdate.text(loc('Updated_Timestamp', timestamp));
+    var is_utc = nodes.timestamp.endsWith('Z');
+    var timestamp = nodes.timestamp + (is_utc ? '' : 'Z');
+    var timestamp_loc = new Date(timestamp).toLocaleString(loc());
+    lastupdate.text(loc('Updated_Timestamp', timestamp_loc));
 
     if (first_load) {
       d3.select('#loading').style('display', 'none');

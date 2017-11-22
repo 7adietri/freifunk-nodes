@@ -33,7 +33,8 @@ if (!ffnds) var ffnds = {};
 
   var uptime = function (json) {
     try {
-      return json.flags.gateway ? 0 : json.statistics.uptime;
+      var uptime = json.statistics.uptime;
+      return typeof(uptime) === 'number' ? uptime : 0;
     }
     catch (e) {
       console.log('Missing uptime: ' + JSON.stringify(json));
@@ -43,7 +44,8 @@ if (!ffnds) var ffnds = {};
 
   var clients = function (json) {
     try {
-      return json.statistics.clients;
+      var clients = json.statistics.clients;
+      return typeof(clients) === 'number' ? clients : 0;
     }
     catch (e) {
       console.log('Missing clients: ' + JSON.stringify(json));
@@ -53,7 +55,7 @@ if (!ffnds) var ffnds = {};
 
   var location = function (json) {
     try {
-      return json.flags.gateway ? undefined : json.nodeinfo.location;
+      return json.nodeinfo.location ? json.nodeinfo.location : '';
     }
     catch (e) {
       console.log('Missing location: ' + JSON.stringify(json));
@@ -63,20 +65,22 @@ if (!ffnds) var ffnds = {};
 
   var firmware = function (json) {
     try {
-      return json.flags.gateway ? '' : json.nodeinfo.software.firmware.release;
+      var sw = json.nodeinfo.software;
+      return sw.firmware && sw.firmware.release ? sw.firmware.release : '';
     }
     catch (e) {
-      console.log('Missing firmware: ' + JSON.stringify(json));
+      console.log('Missing firmware release: ' + JSON.stringify(json));
       return '';
     }
   }
 
   var model = function (json) {
     try {
-      return json.flags.gateway ? '' : json.nodeinfo.hardware.model;
+      var hw = json.nodeinfo.hardware;
+      return hw && hw.model ? hw.model : '';
     }
     catch (e) {
-      console.log('Missing model: ' + JSON.stringify(json));
+      console.log('Missing hardware model: ' + JSON.stringify(json));
       return '';
     }
   }
